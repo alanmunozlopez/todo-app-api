@@ -1,11 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
+import { Task } from './entities/task.entity';
 
 @Injectable()
 export class TaskService {
   private prisma = new PrismaClient();
 
-  async create(data: { name: string; dueDate: Date; priority: number }) {
+  async create(data: {
+    name: string;
+    dueDate: Date;
+    priority: number;
+  }): Promise<Task> {
     return this.prisma.task.create({
       data: {
         name: data.name,
@@ -15,7 +20,7 @@ export class TaskService {
     });
   }
 
-  async findAll(type?: 'pending' | 'overdue') {
+  async findAll(type?: 'pending' | 'overdue'): Promise<Task[]> {
     const tasks = await this.prisma.task.findMany({
       orderBy: [{ dueDate: 'asc' }, { name: 'asc' }, { priority: 'asc' }],
     });
@@ -36,7 +41,7 @@ export class TaskService {
     return tasksWithOverdue;
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<Task | null> {
     const task = await this.prisma.task.findUnique({
       where: { id },
     });
@@ -54,7 +59,7 @@ export class TaskService {
   async update(
     id: number,
     data: { name?: string; dueDate?: Date; priority?: number },
-  ) {
+  ): Promise<Task> {
     const task = await this.prisma.task.update({
       where: { id },
       data,
@@ -66,7 +71,7 @@ export class TaskService {
     };
   }
 
-  async remove(id: number) {
+  async remove(id: number): Promise<Task> {
     const task = await this.prisma.task.delete({
       where: { id },
     });
