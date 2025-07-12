@@ -63,8 +63,7 @@ export class TaskController {
   async findAll(@Query('type') type?: 'pending' | 'overdue'): Promise<Task[]> {
     try {
       return await this.taskService.findAll(type);
-    } catch (error) {
-      console.error(error);
+    } catch {
       throw new HttpException(
         'Internal server error',
         HttpStatus.INTERNAL_SERVER_ERROR,
