@@ -10,9 +10,15 @@ async function createApp(): Promise<INestApplication> {
   if (!app) {
     app = await NestFactory.create(AppModule);
 
+    const allowedOrigins = process.env.FRONTEND_URL
+      ? process.env.FRONTEND_URL.split(',').map((url) => url.trim())
+      : ['http://localhost:5173'];
+
     app.enableCors({
-      origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+      origin: allowedOrigins,
       credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
     });
 
     app.useGlobalPipes(new ValidationPipe());
@@ -34,9 +40,15 @@ export default async (req: Request, res: Response): Promise<void> => {
 async function bootstrap() {
   const application = await NestFactory.create(AppModule);
 
+  const allowedOrigins = process.env.FRONTEND_URL
+    ? process.env.FRONTEND_URL.split(',').map((url) => url.trim())
+    : ['http://localhost:5173'];
+
   application.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    origin: allowedOrigins,
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
   application.useGlobalPipes(new ValidationPipe());
